@@ -15,5 +15,11 @@
     "facebook/graph-sdk": "^5.4",
     "guzzlehttp/guzzle": "^6.2",
     "symfony/console": "^3.1"
-  }
+  },
+  "autoload": {
+    "psr-0": {
+      "Abj": "src/"
+    }
+  },
+  "extra": {}
 }
