@@ -1,0 +1,19 @@
+<?php
+/**
+ * very simple configuration
+ */
+
+$config = [
+    'facebook' => [
+        'app' => [
+            'id'     => '12345678901234567890',
+            'secret' => 'abcdef',
+        ],
+        'me'  => [
+            'id' => '12345678901234567890',
+        ],
+    ],
+    'test-2'   => 'bbb',
+    'test-3'   => 'ccc',
+];
+

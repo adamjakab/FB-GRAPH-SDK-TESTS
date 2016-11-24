@@ -60,7 +60,6 @@ class Application extends BaseApplication
         $answer = [];
         $commandsPath = realpath(__DIR__ . '/../Command');
         $commandFiles = glob($commandsPath . '/*Command.php');
-        print_r($commandFiles);
         foreach ($commandFiles as &$commandFile)
         {
             $commandClass = 'Abj\\Command\\' . str_replace(

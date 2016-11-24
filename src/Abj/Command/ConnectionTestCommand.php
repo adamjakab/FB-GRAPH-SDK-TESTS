@@ -38,14 +38,13 @@ class ConnectionTestCommand extends Command implements CommandInterface
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return bool
+     * @return null|int null or 0 if everything went fine, or an error code
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::_execute($input, $output);
-        $this->log("Starting command " . static::COMMAND_NAME . "...");
-        $this->executeCommand();
-        $this->log("Command " . static::COMMAND_NAME . " done.");
+    
+        return $this->executeCommand();
     }
     
     /**
@@ -53,6 +52,16 @@ class ConnectionTestCommand extends Command implements CommandInterface
      */
     protected function executeCommand()
     {
-        $this->log(static::COMMAND_NAME . " working...");
+        //$this->log(static::COMMAND_NAME . " working...");
+        $this->doEmailCheck();
+    }
+    
+    protected function doEmailCheck()
+    {
+        //$cfg = Configuration::getConfiguration();
+        $fb = Configuration::getFacebook();
+        
+        $this->log("FB...");
+        
     }
 }

@@ -8,8 +8,7 @@
 
 namespace Abj\Console;
 
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
+use Facebook\Facebook;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
 
@@ -23,38 +22,89 @@ class Configuration
     /** @var array */
     private static $configuration;
     
+    /** @var Facebook */
+    private static $facebook;
+    
     /**
      *
      */
     public static function initialize()
     {
-        //do something initworthy
+        //do something init-worthy
     }
     
     /**
-     * @return array
+     * very weak configuration getter
+     *
+     * @param string $path A dot separated path to deep array element like fb.app.it for $config["fb"]["app"]["id"]
+     *
+     * @throws \Exception
+     *
+     * @return mixed
      */
-    public static function getConfiguration()
+    public static function getConfiguration($path = '')
     {
         if (!self::$configuration)
         {
             self::loadConfiguration();
         }
+    
+        $parts = [];
+        if ($path)
+        {
+            $parts = explode(".", $path);
+        }
+    
+        $answer = self::$configuration;
+        foreach ($parts as $part)
+        {
+            if (!array_key_exists($part, $answer))
+            {
+                throw new \Exception("Configuration - invalid requested path($path) part: $part");
+            }
+            $answer = $answer[$part];
+        }
+    
+        return $answer;
+    }
+    
+    //https://developers.facebook.com/docs/php/Facebook/5.0.0
+    //https://developers.facebook.com/tools/explorer/145634995501895/?method=GET&path=10209460937019193&version=v2.8
+    /**
+     * @return \Facebook\Facebook
+     */
+    public static function getFacebook()
+    {
+        if (!self::$facebook)
+        {
+            $cfg = self::getConfiguration();
+            
+            self::$facebook = new Facebook
+            (
+                [
+                    'app_id'                  => self::getConfiguration('facebook.app.id'),
+                    'app_secret'              => self::getConfiguration('facebook.app.secret'),
+                    'default_access_token'    => '{access-token}',
+                    'enable_beta_mode'        => true,
+                    'default_graph_version'   => 'v2.8',
+                    'http_client_handler'     => 'guzzle',
+                    'persistent_data_handler' => 'memory',
+                    /*'url_detection_handler' => new MyUrlDetectionHandler(),*/
+                    /*'pseudo_random_string_generator' => new MyPseudoRandomStringGenerator(),*/
+                ]
+            );
+        }
         
-        return self::$configuration;
+        return self::$facebook;
     }
     
     /**
+     * Load configuration file
      */
     protected static function loadConfiguration()
     {
-        $config = [
-            'test-1' => 'aaa',
-            'test-2' => 'bbb',
-            'test-3' => 'ccc',
-        ];
-        
+        $config = [];
+        require("config.php");
         self::$configuration = $config;
     }
-    
 }

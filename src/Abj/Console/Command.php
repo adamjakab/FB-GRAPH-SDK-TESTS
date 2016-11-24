@@ -30,7 +30,7 @@ class Command extends ConsoleCommand
     protected $cmdOutput;
     
     /** @var bool */
-    protected $logToConsole = false;
+    protected $logToConsole = true;
     
     /**
      * @param string $name
