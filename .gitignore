@@ -1,0 +1,9 @@
+/.idea
+/vendor/
+/tmp/
+
+# all id/pwd related stuff here ;)
+/config.php
+
+.directory
+composer.lock

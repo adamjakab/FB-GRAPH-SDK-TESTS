@@ -1,0 +1,19 @@
+{
+  "name": "jack/fb-graph-sdk-tests",
+  "description": "FBSDK Tests",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "jakabadambalazs",
+      "email": "jakabadambalazs@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "facebook/graph-sdk": "^5.4",
+    "guzzlehttp/guzzle": "^6.2",
+    "symfony/console": "^3.1"
+  }
+}
