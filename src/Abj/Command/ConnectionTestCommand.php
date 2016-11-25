@@ -12,6 +12,7 @@ use Abj\Console\CommandInterface;
 use Abj\Console\Configuration;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
+use Facebook\GraphNodes\GraphUser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -55,20 +56,59 @@ class ConnectionTestCommand extends Command implements CommandInterface
     protected function executeCommand()
     {
         //$this->log(static::COMMAND_NAME . " working...");
-        $this->doEmailCheck();
+        $me = $this->doMeCheck();
+    
+        $message = ";) Is #GraphAPI cool or what?\nN°";
+        for ($i = 1; $i <= 10; $i++)
+        {
+            $this->postSomethingForMe($me, $message . $i);
+            $this->log("POSTED #" . $i);
+            sleep(rand(5, 60));
+        }
     }
     
-    protected function doEmailCheck()
+    /**
+     * @param GraphUser $me
+     * @param string    $message
+     */
+    protected function postSomethingForMe($me, $message)
     {
-        $accessToken = Configuration::getConfiguration("facebook.me.access_token");
         $fb = Configuration::getFacebook();
-        $fb->setDefaultAccessToken($accessToken);
-    
-        $me = false;
+        $endpoint = '/me/feed';
+        $params = [
+            'message' => $message,
+        ];
     
         try
         {
-            $response = $fb->get('/me');
+            $response = $fb->post($endpoint, $params);
+            $body = $response->getDecodedBody();
+            //$this->log("POSTED: " . json_encode($body));
+        }
+        catch(FacebookResponseException $e)
+        {
+            // When Graph returns an error
+            $this->log('Graph returned an error: ' . $e->getMessage());
+        }
+        catch(FacebookSDKException $e)
+        {
+            // When validation fails or other local issues
+            $this->log('Facebook SDK returned an error: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * @return bool|GraphUser
+     */
+    protected function doMeCheck()
+    {
+        $fb = Configuration::getFacebook();
+        $me = false;
+        
+        $endpoint = '/me?fields=id,name,email';
+        try
+        {
+            $response = $fb->get($endpoint);
             $me = $response->getGraphUser();
         }
         catch(FacebookResponseException $e)
@@ -84,8 +124,11 @@ class ConnectionTestCommand extends Command implements CommandInterface
     
         if ($me)
         {
-            $this->log('Logged in as ' . $me->getName());
+            $this->log('Logged in as: ' . $me->getName());
+            $this->log('Email: ' . $me->getEmail());
+            $this->log('Id: ' . $me->getId());
         }
         
+        return $me;
     }
 }
