@@ -84,10 +84,10 @@ class Configuration
                 [
                     'app_id'                  => self::getConfiguration('facebook.app.id'),
                     'app_secret'              => self::getConfiguration('facebook.app.secret'),
-                    'default_access_token'    => '{access-token}',
+                    /*'default_access_token'    => '{access-token}',*/
                     'enable_beta_mode'        => true,
                     'default_graph_version'   => 'v2.8',
-                    'http_client_handler'     => 'guzzle',
+                    /*'http_client_handler'     => 'guzzle',*/
                     'persistent_data_handler' => 'memory',
                     /*'url_detection_handler' => new MyUrlDetectionHandler(),*/
                     /*'pseudo_random_string_generator' => new MyPseudoRandomStringGenerator(),*/

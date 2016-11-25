@@ -10,6 +10,8 @@ namespace Abj\Command;
 use Abj\Console\Command;
 use Abj\Console\CommandInterface;
 use Abj\Console\Configuration;
+use Facebook\Exceptions\FacebookResponseException;
+use Facebook\Exceptions\FacebookSDKException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -58,10 +60,32 @@ class ConnectionTestCommand extends Command implements CommandInterface
     
     protected function doEmailCheck()
     {
-        //$cfg = Configuration::getConfiguration();
+        $accessToken = Configuration::getConfiguration("facebook.me.access_token");
         $fb = Configuration::getFacebook();
-        
-        $this->log("FB...");
+        $fb->setDefaultAccessToken($accessToken);
+    
+        $me = false;
+    
+        try
+        {
+            $response = $fb->get('/me');
+            $me = $response->getGraphUser();
+        }
+        catch(FacebookResponseException $e)
+        {
+            // When Graph returns an error
+            $this->log('Graph returned an error: ' . $e->getMessage());
+        }
+        catch(FacebookSDKException $e)
+        {
+            // When validation fails or other local issues
+            $this->log('Facebook SDK returned an error: ' . $e->getMessage());
+        }
+    
+        if ($me)
+        {
+            $this->log('Logged in as ' . $me->getName());
+        }
         
     }
 }
